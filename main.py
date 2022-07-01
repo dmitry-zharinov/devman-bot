@@ -14,7 +14,7 @@ def get_result_message(title, url, is_negative):
     return f'Преподаватель проверил работу "[{title}]({url})".\n{result}'
 
 
-def get_user_reviews(dvmn_token, bot_token, chat_id):
+def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
     while True:
@@ -41,9 +41,9 @@ def get_user_reviews(dvmn_token, bot_token, chat_id):
             elif status == "timeout":
                 timestamp = reviews.get("timestamp_to_request")
 
-            bot = Bot(token=bot_token)
+            bot = Bot(token=tg_bot_token)
             bot.send_message(
-                chat_id=chat_id,
+                chat_id=tg_chat_id,
                 text=message,
                 parse_mode="markdown")
 
@@ -57,6 +57,6 @@ def get_user_reviews(dvmn_token, bot_token, chat_id):
 if __name__ == "__main__":
     load_dotenv()
     dvmn_token = os.environ["DVMN_TOKEN"]
-    bot_token = os.environ["BOT_TOKEN"]
-    chat_id = os.environ["CHAT_ID"]
-    get_user_reviews(dvmn_token, bot_token, chat_id)
+    tg_bot_token = os.environ["TG_BOT_TOKEN"]
+    tg_chat_id = os.environ["TG_CHAT_ID"]
+    get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id)

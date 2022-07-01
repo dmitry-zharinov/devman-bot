@@ -12,13 +12,13 @@ pip install -r requirements.txt
 4. В директории скрипта создайте файл `.env` и укажите в нём следующие данные:
 ```
 DVMN_TOKEN=`devman_token`
-BOT_TOKEN=`telegram_token`
-CHAT_ID=`chat_id`
+TG_BOT_TOKEN=`telegram_token`
+TG_CHAT_ID=`telegram_chat_id`
 ```
 Где:
 - `devman_token` - токен для работы с [API Девмана](https://dvmn.org/api/docs/)
 - `telegram_token` - токен для Telegram-бота, полученный от Bot Father
-- `chat_id` - идентификатор пользователя в Telegram, можно узнать у бота [@userinfobot](https://t.me/userinfobot)
+- `telegram_chat_id` - идентификатор пользователя в Telegram, можно узнать у бота [@userinfobot](https://t.me/userinfobot)
 
 
 ### Запуск
