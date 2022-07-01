@@ -11,9 +11,9 @@ pip install -r requirements.txt
 3. Необходимо [зарегистрировать бота и получить его API-токен](https://telegram.me/BotFather)
 4. В директории скрипта создайте файл `.env` и укажите в нём следующие данные:
 ```
-DVMN_TOKEN=`devman_token`
-TG_BOT_TOKEN=`telegram_token`
-TG_CHAT_ID=`telegram_chat_id`
+DVMN_TOKEN=devman_token
+TG_BOT_TOKEN=telegram_token
+TG_CHAT_ID=telegram_chat_id
 ```
 Где:
 - `devman_token` - токен для работы с [API Девмана](https://dvmn.org/api/docs/)
