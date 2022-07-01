@@ -34,8 +34,8 @@ def get_user_reviews(dvmn_token, bot_token, chat_id):
                 timestamp = reviews.get("last_attempt_timestamp")
                 result = reviews.get("new_attempts")[0]
                 message = get_result_message(
-                    lesson_title=result["lesson_title"],
-                    lesson_url=result["lesson_url"],
+                    title=result["lesson_title"],
+                    url=result["lesson_url"],
                     is_negative=result["is_negative"],
                 )
             elif status == "timeout":
