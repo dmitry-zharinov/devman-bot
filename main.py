@@ -41,18 +41,17 @@ def get_user_reviews(dvmn_token, bot_token, chat_id):
             elif status == "timeout":
                 timestamp = reviews.get("timestamp_to_request")
 
-            send_bot_message(bot_token, chat_id, message)
+            bot = Bot(token=bot_token)
+            bot.send_message(
+                chat_id=chat_id,
+                text=message,
+                parse_mode="markdown")
 
         except requests.exceptions.HTTPError as err:
             print(f"Возникла ошибка при выполнении HTTP-запроса:\n{err}")
         except (requests.exceptions.ReadTimeout,
                 requests.exceptions.ConnectionError):
             continue
-
-
-def send_bot_message(token, chat_id, message):
-    bot = Bot(token=token)
-    bot.send_message(chat_id=chat_id, text=message, parse_mode="markdown")
 
 
 if __name__ == "__main__":
