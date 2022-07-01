@@ -17,6 +17,8 @@ def get_result_message(title, url, is_negative):
 def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
+    bot = Bot(token=tg_bot_token)
+
     while True:
         try:
             response = requests.get(
@@ -36,21 +38,19 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
                 message = get_result_message(
                     title=result["lesson_title"],
                     url=result["lesson_url"],
-                    is_negative=result["is_negative"],
-                )
+                    is_negative=result["is_negative"])
+                bot.send_message(
+                    chat_id=tg_chat_id,
+                    text=message,
+                    parse_mode="markdown")
             elif status == "timeout":
                 timestamp = reviews.get("timestamp_to_request")
-
-            bot = Bot(token=tg_bot_token)
-            bot.send_message(
-                chat_id=tg_chat_id,
-                text=message,
-                parse_mode="markdown")
 
         except requests.exceptions.HTTPError as err:
             print(f"Возникла ошибка при выполнении HTTP-запроса:\n{err}")
         except (requests.exceptions.ReadTimeout,
                 requests.exceptions.ConnectionError):
+            time.sleep(180)
             continue
 
 
