@@ -5,6 +5,8 @@ import requests
 from dotenv import load_dotenv
 from telegram import Bot
 
+TIMEOUT = 5
+
 
 def get_result_message(title, url, is_negative):
     if is_negative:
@@ -25,7 +27,7 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
                 url,
                 headers={"Authorization": f"Token {dvmn_token}"},
                 params={"timestamp": timestamp},
-                timeout=60,
+                timeout=TIMEOUT,
             )
             response.raise_for_status()
             reviews = response.json()
@@ -48,9 +50,10 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
 
         except requests.exceptions.HTTPError as err:
             print(f"Возникла ошибка при выполнении HTTP-запроса:\n{err}")
-        except (requests.exceptions.ReadTimeout,
-                requests.exceptions.ConnectionError):
-            time.sleep(180)
+        except requests.exceptions.ReadTimeout:
+            pass
+        except requests.exceptions.ConnectionError:
+            time.sleep(TIMEOUT)
             continue
 
 
