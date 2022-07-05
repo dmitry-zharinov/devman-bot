@@ -11,7 +11,7 @@ TIMEOUT = 5
 
 
 class TelegramLogsHandler(logging.Handler):
-    
+
     def __init__(self, tg_bot, chat_id):
         super().__init__()
         self.chat_id = chat_id
@@ -20,7 +20,6 @@ class TelegramLogsHandler(logging.Handler):
     def emit(self, record):
         log_entry = self.format(record)
         self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
-
 
 
 def get_result_message(title, url, is_negative):
@@ -38,7 +37,7 @@ def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
 
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
-    headers={"Authorization": f"Token {dvmn_token}"}
+    headers = {"Authorization": f"Token {dvmn_token}"}
 
     logging.info('Бот запущен.')
 
@@ -74,7 +73,8 @@ def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
                 logger.warning(response)
         except requests.exceptions.ReadTimeout:
             pass
-        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as err:
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.HTTPError) as err:
             logging.exception(err, exc_info=False)
             time.sleep(TIMEOUT)
             continue
