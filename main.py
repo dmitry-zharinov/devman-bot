@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 
@@ -20,6 +21,7 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
     bot = Bot(token=tg_bot_token)
+    logging.info('Бот запущен.')
 
     while True:
         try:
@@ -57,9 +59,17 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
             continue
 
 
-if __name__ == "__main__":
+def main():
     load_dotenv()
     dvmn_token = os.environ["DVMN_TOKEN"]
     tg_bot_token = os.environ["TG_BOT_TOKEN"]
     tg_chat_id = os.environ["TG_CHAT_ID"]
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        level=logging.INFO
+    )
     get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id)
+
+
+if __name__ == "__main__":
+    main()
