@@ -6,7 +6,21 @@ import requests
 from dotenv import load_dotenv
 from telegram import Bot
 
+
 TIMEOUT = 5
+
+
+class TelegramLogsHandler(logging.Handler):
+    
+    def __init__(self, tg_bot, chat_id):
+        super().__init__()
+        self.chat_id = chat_id
+        self.tg_bot = tg_bot
+
+    def emit(self, record):
+        log_entry = self.format(record)
+        self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+
 
 
 def get_result_message(title, url, is_negative):
@@ -17,18 +31,24 @@ def get_result_message(title, url, is_negative):
     return f'Преподаватель проверил работу "[{title}]({url})".\n{result}'
 
 
-def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
+def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramLogsHandler(tg_bot, tg_chat_id))
+
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
-    bot = Bot(token=tg_bot_token)
+    headers={"Authorization": f"Token {dvmn_token}"}
+
     logging.info('Бот запущен.')
 
     while True:
         try:
+            params = {"timestamp": timestamp}
             response = requests.get(
                 url,
-                headers={"Authorization": f"Token {dvmn_token}"},
-                params={"timestamp": timestamp},
+                headers=headers,
+                params=params,
                 timeout=TIMEOUT,
             )
             response.raise_for_status()
@@ -43,18 +63,19 @@ def get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id):
                     title=result["lesson_title"],
                     url=result["lesson_url"],
                     is_negative=result["is_negative"])
-                bot.send_message(
+                tg_bot.send_message(
                     chat_id=tg_chat_id,
                     text=message,
                     parse_mode="markdown")
+
             elif status == "timeout":
                 timestamp = reviews.get("timestamp_to_request")
-
-        except requests.exceptions.HTTPError as err:
-            print(f"Возникла ошибка при выполнении HTTP-запроса:\n{err}")
+            else:
+                logger.warning(response)
         except requests.exceptions.ReadTimeout:
             pass
-        except requests.exceptions.ConnectionError:
+        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as err:
+            logging.exception(err, exc_info=False)
             time.sleep(TIMEOUT)
             continue
 
@@ -68,7 +89,9 @@ def main():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO
     )
-    get_user_reviews(dvmn_token, tg_bot_token, tg_chat_id)
+    tg_bot = Bot(token=tg_bot_token)
+
+    get_user_reviews(tg_bot, dvmn_token, tg_chat_id)
 
 
 if __name__ == "__main__":
