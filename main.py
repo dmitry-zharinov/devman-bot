@@ -6,8 +6,10 @@ import requests
 from dotenv import load_dotenv
 from telegram import Bot
 
-
 TIMEOUT = 5
+
+
+logger = logging.getLogger()
 
 
 class TelegramLogsHandler(logging.Handler):
@@ -31,10 +33,6 @@ def get_result_message(title, url, is_negative):
 
 
 def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    logger.addHandler(TelegramLogsHandler(tg_bot, tg_chat_id))
-
     timestamp = time.time()
     url = "https://dvmn.org/api/long_polling/"
     headers = {"Authorization": f"Token {dvmn_token}"}
@@ -70,7 +68,7 @@ def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
             elif status == "timeout":
                 timestamp = reviews.get("timestamp_to_request")
             else:
-                logger.warning(response)
+                logging.warning(response)
         except requests.exceptions.ReadTimeout:
             pass
         except (requests.exceptions.ConnectionError,
@@ -85,11 +83,15 @@ def main():
     dvmn_token = os.environ["DVMN_TOKEN"]
     tg_bot_token = os.environ["TG_BOT_TOKEN"]
     tg_chat_id = os.environ["TG_CHAT_ID"]
+
+    tg_bot = Bot(token=tg_bot_token)
+
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         level=logging.INFO
     )
-    tg_bot = Bot(token=tg_bot_token)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramLogsHandler(tg_bot, tg_chat_id))
 
     get_user_reviews(tg_bot, dvmn_token, tg_chat_id)
 
