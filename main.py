@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from telegram import Bot
 
 TIMEOUT = 5
+TIMEOUT_FOR_ERROR = 43200
 
 
 logger = logging.getLogger()
@@ -74,7 +75,7 @@ def get_user_reviews(tg_bot, dvmn_token, tg_chat_id):
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.HTTPError) as err:
             logging.exception(err, exc_info=False)
-            time.sleep(TIMEOUT)
+            time.sleep(TIMEOUT_FOR_ERROR)
             continue
 
 
