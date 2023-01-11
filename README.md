@@ -21,7 +21,22 @@ TG_CHAT_ID=telegram_chat_id
 - `telegram_chat_id` - идентификатор пользователя в Telegram, можно узнать у бота [@userinfobot](https://t.me/userinfobot)
 
 
-### Запуск
+### Локальный запуск
 ```
 $ python main.py
 ```
+
+### Запуск в Docker-контейнере
+Предварительно необходимо [установить и запустить Docker](https://docs.docker.com/get-docker/).
+1. В директории скрипта, в которой находится `Dockerfile`, выполните команду сборки докер-образа:
+```bash
+$ docker build -t devman-bot .
+```
+
+2. Для создания и запуска контейнера:
+
+```bash
+$ docker run --env-file .env devman-bot
+```
+Где:
+- `.env` - путь к файлу со значениями переменных окружения (см. раздел `Установка`).
